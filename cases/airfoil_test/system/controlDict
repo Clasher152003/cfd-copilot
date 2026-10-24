@@ -1,0 +1,85 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     simpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         500;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   100;
+
+purgeWrite      2;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+// Residual control for convergence
+functions
+{
+    residuals
+    {
+        type            residuals;
+        libs            (utilityFunctionObjects);
+        writeControl    timeStep;
+        writeInterval   1;
+        fields          (U p);
+    }
+
+    forceCoeffs1
+    {
+        type            forceCoeffs;
+        libs            (forces);
+
+        patches         (airfoil);
+
+        pName           p;
+        UName           U;
+        rho             rhoInf;
+        rhoInf          1.225;  // Air density at sea level (kg/m³)
+
+        liftDir         (-0.087156 0.996195 0);
+        dragDir         (0.996195 0.087156 0);
+        CofR            (0.250000 0 0);  // Quarter-chord reference point
+        pitchAxis       (0 0 1);
+
+        magUInf         20.0;
+        lRef            1.0;  // Chord length
+        Aref            0.01;          // Reference area (chord × span)
+
+        writeControl    timeStep;
+        writeInterval   1;
+    }
+}
+
+// ************************************************************************* //
